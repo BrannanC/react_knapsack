@@ -62,7 +62,6 @@ const init_state = {
 function reducer(state, action) {
   switch (action.type) {
     case "RESET":
-      console.log(action);
       const new_grid = init_gr(items_init, 4);
       return {
         ...state,
@@ -149,9 +148,6 @@ function Knapsack() {
         }
       }
     }
-    // setGrid(gr_copy);
-    // setDidStep(false);
-    // setMessages(messages);
     return { grid: gr_copy, messages };
   };
 
@@ -161,15 +157,10 @@ function Knapsack() {
     let w_i = state.weight_i;
     if (state.weight_i + 1 < state.capacity) {
       w_i = state.weight_i + 1;
-      // setWeight_i(w_i);
     } else {
       i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
       w_i = 0;
-      // setItem_i(i_i);
-      // setWeight_i(w_i);
     }
-    // setDidStep(true);
-    console.log("i w", i_i, w_i);
     const updated = getMessages(i_i, w_i);
     dispatch({ type: "STEP", i: i_i, w: w_i, ...updated });
   };
@@ -202,7 +193,11 @@ function Knapsack() {
       <div style={container}>
         <div style={items_style}>
           {state.items.map(x => (
-            <p key={`items ${x.name}`}>{x.name}</p>
+            <>
+              <h3 key={`items ${x.name}`}>{x.name}</h3>
+              <p>Cost: {x.cost}</p>
+              <p>Value: {x.val}</p>
+            </>
           ))}
         </div>
 
