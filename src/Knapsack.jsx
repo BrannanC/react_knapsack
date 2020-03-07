@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { findByLabelText } from "@testing-library/react";
+import React, { useState, useEffect, useReducer } from "react";
 
 const container = {
   background: "red",
@@ -35,71 +34,159 @@ const itemStyle = {
 };
 
 const items_init = [
-  { name: "Stereo", cost: 4, value: 3000 },
-  { name: "Guitar", cost: 1, value: 1500 },
-  { name: "Laptop", cost: 3, value: 2000 }
+  { name: "Guitar", cost: 1, val: 1500 },
+  { name: "Stereo", cost: 4, val: 3000 },
+  { name: "Laptop", cost: 3, val: 2000 }
 ];
 
-function Knapsack() {
-  const [grid, setGrid] = useState([]);
-  const [items, setItems] = useState(items_init);
-  const [capacity, setCapacity] = useState(4);
-  const [messages, setMessages] = useState(["oh hi there"]);
-  const [item_i, setItem_i] = useState(0);
-  const [weight_i, setWeight_i] = useState(0);
-  const [didStep, setDidStep] = useState(true);
-
-  useEffect(() => {
-    const gr = [];
-    for (let i = 0; i < items.length; i++) {
-      gr.push([]);
-      for (let j = 0; j < capacity; j++) {
-        gr[i].push({ value: null, chosen: [] });
-      }
+const init_gr = (items, capacity) => {
+  const gr = [];
+  for (let i = 0; i < items.length; i++) {
+    gr.push([]);
+    for (let j = 0; j < capacity; j++) {
+      gr[i].push({ val: null, chosen: [] });
     }
-    setGrid(gr);
-  }, [items]);
+  }
+  return gr;
+};
+
+const init_state = {
+  items: items_init,
+  grid: init_gr(items_init, 4),
+  messages: [],
+  item_i: 0,
+  weight_i: 0,
+  capacity: 4
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "RESET":
+      console.log(action);
+      const new_grid = init_gr(items_init, 4);
+      return {
+        ...state,
+        grid: new_grid,
+        item_i: 0,
+        weight_i: 0
+      };
+    case "STEP":
+      return {
+        ...state,
+        item_i: action.i,
+        weight_i: action.w,
+        messages: action.messages,
+        grid: action.grid
+      };
+    default:
+      throw new Error();
+  }
+}
+
+function Knapsack() {
+  const [state, dispatch] = useReducer(reducer, init_state);
+  const [didReset, setDidReset] = useState(true);
 
   const getMessages = (i, w) => {
     const messages = [];
-    if (items[i].cost > w + 1) {
+    const gr_copy = JSON.parse(JSON.stringify(state.grid));
+    if (state.items[i].cost > w + 1) {
       messages.push("TOO BIG");
       if (i === 0) {
         messages.push(
-          "This is the first item so there are no other rows to check, value is 0"
+          "This is the first item so there are no other rows to check, val is 0"
         );
-        const gr_copy = JSON.parse(JSON.stringify(grid));
-        console.log(gr_copy);
-        gr_copy[i][w] = { ...gr_copy[i][w], value: 0 };
-        setGrid(gr_copy);
+        gr_copy[i][w] = { val: 0, items: [] };
+      } else {
+        // Too big, get value from last row
+        gr_copy[i][w] = { ...gr_copy[i - 1][w] };
       }
     } else {
       messages.push("IT FITS");
+      if (state.items[i].cost === w + 1) {
+        // item is size of bag
+        if (i === 0 || state.items[i].val > state.grid[i - 1][w].val) {
+          if (i === 0) {
+            messages.push(
+              `No other rows to check, value is ${state.items[i].val}`
+            );
+            gr_copy[i][w] = {
+              val: state.items[i].val,
+              items: [state.items[i].name]
+            };
+          } else {
+            messages.push("HIGHER val");
+            gr_copy[i][w] = {
+              val: state.items[i].val,
+              items: [state.items[i].name]
+            };
+          }
+        }
+      } else {
+        // bag can fit more items
+        if (i === 0) {
+          // first item
+          messages.push(
+            "And there's room for more items, but no other items to check"
+          );
+          gr_copy[i][w] = {
+            val: state.items[i].val,
+            items: [state.items[i].name]
+          };
+        } else {
+          // not first item
+          messages.push(
+            `Current item + last bag of capacity ${w + 1 - state.items[i].cost}`
+          );
+          gr_copy[i][w] = {
+            val:
+              state.items[i].val +
+              state.grid[i - 1][w - state.items[i].cost].val,
+            items:
+              state.grid[i - 1][w - state.items[i].cost].items +
+              [state.items[i].name]
+          };
+        }
+      }
     }
-    setDidStep(false);
-    setMessages(messages);
+    // setGrid(gr_copy);
+    // setDidStep(false);
+    // setMessages(messages);
+    return { grid: gr_copy, messages };
   };
-  useEffect(() => {
-    if (!!grid.length && didStep) {
-      getMessages(item_i, weight_i);
-    }
-  }, [item_i, weight_i, grid]);
 
   const step = e => {
     e.preventDefault();
-    let i_i = item_i;
-    let w_i = weight_i;
-    if (weight_i + 1 < capacity) {
-      w_i = weight_i + 1;
-      setWeight_i(w_i);
+    let i_i = state.item_i;
+    let w_i = state.weight_i;
+    if (state.weight_i + 1 < state.capacity) {
+      w_i = state.weight_i + 1;
+      // setWeight_i(w_i);
     } else {
-      i_i = item_i >= items.length - 1 ? 0 : item_i + 1;
+      i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
       w_i = 0;
-      setItem_i(i_i);
-      setWeight_i(w_i);
+      // setItem_i(i_i);
+      // setWeight_i(w_i);
     }
-    setDidStep(true);
+    // setDidStep(true);
+    console.log("i w", i_i, w_i);
+    const updated = getMessages(i_i, w_i);
+    dispatch({ type: "STEP", i: i_i, w: w_i, ...updated });
   };
+
+  const reset = e => {
+    e.preventDefault();
+    setDidReset(true);
+    dispatch({ type: "RESET" });
+  };
+
+  useEffect(() => {
+    if (didReset) {
+      const updated = getMessages(0, 0);
+      setDidReset(false);
+      dispatch({ type: "STEP", i: 0, w: 0, ...updated });
+    }
+  }, [didReset]);
 
   return (
     <div className="Knapsack">
@@ -111,36 +198,41 @@ function Knapsack() {
         size (number of items * capacity).
       </p>
       <button onClick={step}>Step</button>
+      <button onClick={reset}>Reset</button>
       <div style={container}>
         <div style={items_style}>
-          {items.map(x => (
-            <p>{x.name}</p>
+          {state.items.map(x => (
+            <p key={`items ${x.name}`}>{x.name}</p>
           ))}
         </div>
 
         <div>
-          {messages.map(x => (
-            <p>{x}</p>
+          {state.messages.map(x => (
+            <p key={x}>{x}</p>
           ))}
         </div>
 
-        {!!grid.length && (
+        {!!state.grid.length && (
           <div>
-            <h2>{grid[0].map((x, cap) => cap + 1)}</h2>
+            <h2>{state.grid[0].map((x, cap) => cap + 1)}</h2>
             <div style={grid_style}>
-              {grid.map((row, i) => (
-                <div style={rowStyle}>
-                  {row.map((x, j) => (
-                    <div
-                      style={
-                        i === item_i && j === weight_i
-                          ? currentItemStyle
-                          : itemStyle
-                      }
-                    >
-                      {x.value === null ? "?" : x.value}
-                    </div>
-                  ))}
+              {state.grid.map((row, i) => (
+                <div style={rowStyle} key={state.items[i].name}>
+                  {row.map((x, j) => {
+                    return (
+                      <div
+                        key={`${row}${j}`}
+                        style={
+                          i === state.item_i && j === state.weight_i
+                            ? currentItemStyle
+                            : itemStyle
+                        }
+                      >
+                        {x.val === null ? "?" : x.val}
+                        {x.items ? (!!x.items.length ? x.items : "None") : "?"}
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
