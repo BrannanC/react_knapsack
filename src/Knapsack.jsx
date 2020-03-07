@@ -62,7 +62,6 @@ const init_state = {
 function reducer(state, action) {
   switch (action.type) {
     case "RESET":
-      console.log(action);
       const new_grid = init_gr(items_init, 4);
       return {
         ...state,
@@ -169,7 +168,6 @@ function Knapsack() {
       // setWeight_i(w_i);
     }
     // setDidStep(true);
-    console.log("i w", i_i, w_i);
     const updated = getMessages(i_i, w_i);
     dispatch({ type: "STEP", i: i_i, w: w_i, ...updated });
   };
@@ -202,7 +200,11 @@ function Knapsack() {
       <div style={container}>
         <div style={items_style}>
           {state.items.map(x => (
-            <p key={`items ${x.name}`}>{x.name}</p>
+            <>
+              <h3 key={`items ${x.name}`}>{x.name}</h3>
+              <p>Cost: {x.cost}</p>
+              <p>Value: {x.val}</p>
+            </>
           ))}
         </div>
 
