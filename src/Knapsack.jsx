@@ -3,12 +3,42 @@ import React, { useState, useEffect, useReducer } from "react";
 const container = {
   background: "red",
   width: "900px",
-  height: "80vh",
-  margin: "0 auto",
-  display: "flex"
+  padding: "0 20px",
+  height: "70vh",
+  margin: "10px auto",
+  borderRadius: "10px",
+  display: "flex",
+  justifyContent: "space-between"
 };
 
-const items_style = {};
+const column_style = {
+  width: "20%",
+  margin: "20px 10px",
+  padding: "3px",
+  background: "#f5f2ed",
+  borderRadius: "10px"
+}
+
+const items_style = {
+  ...column_style,
+  lineHeight: "12px"
+};
+
+const item_style = {
+  marginBottom: "40px"
+}
+
+const messages_style = {
+  ...column_style
+};
+
+const grid_box_style = {
+  ...column_style,
+  width: "45%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center"
+};
 
 const grid_style = {
   display: "flex",
@@ -20,7 +50,8 @@ const rowStyle = {
 };
 
 const currentItemStyle = {
-  color: "white",
+  color: "red",
+  fontWeight: "bold",
   border: "1px solid black"
 };
 
@@ -200,22 +231,25 @@ function Knapsack() {
       <div style={container}>
         <div style={items_style}>
           {state.items.map(x => (
-            <>
+            <div style={item_style}>
               <h3 key={`items ${x.name}`}>{x.name}</h3>
               <p>Cost: {x.cost}</p>
               <p>Value: {x.val}</p>
-            </>
+            </div>
           ))}
         </div>
 
-        <div>
-          {state.messages.map(x => (
-            <p key={x}>{x}</p>
+        <div style={messages_style}>
+          {state.messages.map((x, i) => (
+            i === 0 ?
+            <h3 key={i}>{x}</h3>
+            :
+            <p key={i}>{x}</p>
           ))}
         </div>
 
         {!!state.grid.length && (
-          <div>
+          <div style={grid_box_style}>
             <h2>{state.grid[0].map((x, cap) => cap + 1)}</h2>
             <div style={grid_style}>
               {state.grid.map((row, i) => (
