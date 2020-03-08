@@ -4,7 +4,7 @@ const container = {
   background: "red",
   width: "900px",
   padding: "0 20px",
-  height: "70vh",
+  height: "60vh",
   margin: "10px auto",
   borderRadius: "10px",
   display: "flex",
@@ -49,10 +49,21 @@ const rowStyle = {
   display: "flex"
 };
 
-const currentItemStyle = {
+const grid_item_style = {
+  width: "70px",
+  height: "64px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  border: "1px solid black",
+  padding: "3px",
+  margin: "0 10px"
+};
+
+const current_grid_item_style = {
+  ...grid_item_style,
   color: "red",
-  fontWeight: "bold",
-  border: "1px solid black"
+  fontWeight: "bold"
 };
 
 const blurStyle = {
@@ -60,9 +71,14 @@ const blurStyle = {
   margin: "0 auto"
 };
 
-const itemStyle = {
-  border: "1px solid black"
-};
+const button_style = {
+  fontSize: "16px",
+  fontWeight: "bold",
+  padding: "10px",
+  margin: "15px",
+  borderRadius: "3px"
+}
+
 
 const items_init = [
   { name: "Guitar", cost: 1, val: 1500 },
@@ -173,7 +189,7 @@ function Knapsack() {
               state.items[i].val +
               state.grid[i - 1][w - state.items[i].cost].val,
             items:
-              state.grid[i - 1][w - state.items[i].cost].items +
+              state.grid[i - 1][w - state.items[i].cost].items + " " +
               [state.items[i].name]
           };
         }
@@ -226,8 +242,8 @@ function Knapsack() {
         combination of items for each knapsack. First, initialize a 2d array of
         size (number of items * capacity).
       </p>
-      <button onClick={step}>Step</button>
-      <button onClick={reset}>Reset</button>
+      <button style={button_style} onClick={step}>Step</button>
+      <button style={button_style} onClick={reset}>Reset</button>
       <div style={container}>
         <div style={items_style}>
           {state.items.map(x => (
@@ -260,11 +276,11 @@ function Knapsack() {
                         key={`${row}${j}`}
                         style={
                           i === state.item_i && j === state.weight_i
-                            ? currentItemStyle
-                            : itemStyle
+                            ? current_grid_item_style
+                            : grid_item_style
                         }
                       >
-                        {x.val === null ? "?" : x.val}
+                        {x.val === null ? "?" : x.val}{" "} 
                         {x.items ? (!!x.items.length ? x.items : "None") : "?"}
                       </div>
                     );
