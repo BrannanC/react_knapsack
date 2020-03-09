@@ -53,6 +53,8 @@ const grid_item_style = {
   width: "70px",
   height: "64px",
   display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-evenly",
   alignItems: "center",
   justifyContent: "center",
   border: "1px solid black",
@@ -166,6 +168,12 @@ function Knapsack() {
               items: [state.items[i].name]
             };
           }
+        } else {
+          messages.push("LOWER val");
+          gr_copy[i][w] = {
+            val: state.grid[i - 1][w].val,
+            items: state.grid[i - 1][w].items
+          };
         }
       } else {
         // bag can fit more items
@@ -180,18 +188,39 @@ function Knapsack() {
           };
         } else {
           // not first item
-          messages.push(
-            `Current item + last bag of capacity ${w + 1 - state.items[i].cost}`
-          );
-          gr_copy[i][w] = {
-            val:
-              state.items[i].val +
-              state.grid[i - 1][w - state.items[i].cost].val,
-            items:
-              state.grid[i - 1][w - state.items[i].cost].items +
-              " " +
-              [state.items[i].name]
-          };
+          if (
+            state.items[i].val +
+              state.grid[i - 1][w - state.items[i].cost].val >
+            state.grid[i - 1][w].val
+          ) {
+            // Item + extra bag is greater than last
+            messages.push(
+              `There's extra room in our knapsack. Current item + last bag of capacity ${w +
+                1 -
+                state.items[i].cost} is more valuable than the last rows ${w +
+                1}lbs knapsack`
+            );
+            gr_copy[i][w] = {
+              val:
+                state.items[i].val +
+                state.grid[i - 1][w - state.items[i].cost].val,
+              items: [
+                ...state.grid[i - 1][w - state.items[i].cost].items,
+                state.items[i].name
+              ]
+            };
+          } else {
+            messages.push(
+              `There's extra room in our knapsack. Current item + last bag of capacity ${w +
+                1 -
+                state.items[i].cost} is less valuable than the last rows ${w +
+                1}lbs knapsack`
+            );
+            gr_copy[i][w] = {
+              val: state.grid[i - 1][w].val,
+              items: state.grid[i - 1][w - state.items[i].cost].items
+            };
+          }
         }
       }
     }
@@ -248,8 +277,8 @@ function Knapsack() {
       <div style={container}>
         <div style={items_style}>
           {state.items.map(x => (
-            <div style={item_style}>
-              <h3 key={`items ${x.name}`}>{x.name}</h3>
+            <div style={item_style} key={`items ${x.name}`}>
+              <h3>{x.name}</h3>
               <p>Cost: {x.cost}</p>
               <p>Value: {x.val}</p>
             </div>
@@ -278,8 +307,16 @@ function Knapsack() {
                             : grid_item_style
                         }
                       >
-                        {x.val === null ? "?" : x.val}{" "}
-                        {x.items ? (!!x.items.length ? x.items : "None") : "?"}
+                        <span>{x.val === null ? "?" : x.val}</span>
+                        {x.items
+                          ? !!x.items.length
+                            ? x.items.map(item => (
+                                <span key={`items${row}${x}${item}`}>
+                                  {item}
+                                </span>
+                              ))
+                            : "None"
+                          : "?"}
                       </div>
                     );
                   })}
