@@ -17,7 +17,7 @@ const column_style = {
   padding: "3px",
   background: "#f5f2ed",
   borderRadius: "10px"
-}
+};
 
 const items_style = {
   ...column_style,
@@ -26,7 +26,7 @@ const items_style = {
 
 const item_style = {
   marginBottom: "40px"
-}
+};
 
 const messages_style = {
   ...column_style
@@ -77,8 +77,7 @@ const button_style = {
   padding: "10px",
   margin: "15px",
   borderRadius: "3px"
-}
-
+};
 
 const items_init = [
   { name: "Guitar", cost: 1, val: 1500 },
@@ -189,7 +188,8 @@ function Knapsack() {
               state.items[i].val +
               state.grid[i - 1][w - state.items[i].cost].val,
             items:
-              state.grid[i - 1][w - state.items[i].cost].items + " " +
+              state.grid[i - 1][w - state.items[i].cost].items +
+              " " +
               [state.items[i].name]
           };
         }
@@ -205,6 +205,10 @@ function Knapsack() {
     if (state.weight_i + 1 < state.capacity) {
       w_i = state.weight_i + 1;
     } else {
+      if (i_i === state.items.length - 1) {
+        reset(e);
+        return;
+      }
       i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
       w_i = 0;
     }
@@ -235,8 +239,12 @@ function Knapsack() {
         combination of items for each knapsack. First, initialize a 2d array of
         size (number of items * capacity).
       </p>
-      <button style={button_style} onClick={step}>Step</button>
-      <button style={button_style} onClick={reset}>Reset</button>
+      <button style={button_style} onClick={step}>
+        Step
+      </button>
+      <button style={button_style} onClick={reset}>
+        Reset
+      </button>
       <div style={container}>
         <div style={items_style}>
           {state.items.map(x => (
@@ -249,12 +257,9 @@ function Knapsack() {
         </div>
 
         <div style={messages_style}>
-          {state.messages.map((x, i) => (
-            i === 0 ?
-            <h3 key={i}>{x}</h3>
-            :
-            <p key={i}>{x}</p>
-          ))}
+          {state.messages.map((x, i) =>
+            i === 0 ? <h3 key={i}>{x}</h3> : <p key={i}>{x}</p>
+          )}
         </div>
 
         {!!state.grid.length && (
@@ -273,7 +278,7 @@ function Knapsack() {
                             : grid_item_style
                         }
                       >
-                        {x.val === null ? "?" : x.val}{" "} 
+                        {x.val === null ? "?" : x.val}{" "}
                         {x.items ? (!!x.items.length ? x.items : "None") : "?"}
                       </div>
                     );

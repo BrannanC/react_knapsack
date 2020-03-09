@@ -1,5 +1,7 @@
 https://determined-sinoussi-7e2f14.netlify.com/
 
+This is a tool for learning Dynamic Programming. It steps through _the knapsack_ :ghostboi: problem. Please add changes and make this a useable tool. The unfinished branch will stay the way it is so it can be used as an exercise.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
