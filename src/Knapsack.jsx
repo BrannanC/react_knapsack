@@ -133,6 +133,7 @@ function reducer(state, action) {
 function Knapsack() {
   const [state, dispatch] = useReducer(reducer, init_state);
   const [didReset, setDidReset] = useState(true);
+  const [foundSolution, setFoundSolution] = useState(false);
 
   const getMessages = (i, w) => {
     const messages = [];
@@ -270,6 +271,12 @@ function Knapsack() {
     let w_i = state.weight_i;
     if (state.weight_i + 1 < state.capacity) {
       w_i = state.weight_i + 1;
+      if (
+        state.weight_i + 1 === state.capacity - 1 &&
+        i_i === state.items.length - 1
+      ) {
+        setFoundSolution(true);
+      }
     } else {
       if (i_i === state.items.length - 1) {
         reset(e);
@@ -278,6 +285,7 @@ function Knapsack() {
       i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
       w_i = 0;
     }
+
     const updated = getMessages(i_i, w_i);
     dispatch({ type: "STEP", i: i_i, w: w_i, ...updated });
   };
@@ -285,6 +293,7 @@ function Knapsack() {
   const reset = e => {
     e.preventDefault();
     setDidReset(true);
+    setFoundSolution(false);
     dispatch({ type: "RESET" });
   };
 
@@ -360,6 +369,13 @@ function Knapsack() {
                 </div>
               ))}
             </div>
+            {foundSolution && (
+              <p>
+                Solution: The highest total value that will also fit in a{" "}
+                {state.capacity}lb knapsack is{" "}
+                {state.grid[state.items.length - 1][state.capacity - 1].val}.
+              </p>
+            )}
           </div>
         )}
       </div>
