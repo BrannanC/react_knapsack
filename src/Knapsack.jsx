@@ -115,39 +115,35 @@ const button_style = {
 const possible_items = [
   { name: "Ukulele", cost: 1, val: 1500 },
   { name: "Stereo", cost: 4, val: 3000 },
-  { name: "Laptop", cost: 3, val: 2000 }, 
+  { name: "Laptop", cost: 3, val: 2000 },
   { name: "Garbage", cost: 3, val: 500 },
   { name: "Diamond", cost: 1, val: 4000 },
   { name: "Sandwich", cost: 1, val: 750 },
   { name: "Leaf Blower", cost: 4, val: 2000 },
-  { name: "Iggy the Iguana", cost: 2, val: 5000 },
-]
-
-const items_init = [
-  possible_items[0],
-  possible_items[1],
-  possible_items[2]
+  { name: "Iggy the Iguana", cost: 2, val: 5000 }
 ];
 
+const items_init = [possible_items[0], possible_items[1], possible_items[2]];
+
 const shuffleArr = arr => {
-  const newArr = [...arr]
-  for (let i=0; i < newArr.length; i++) {
+  const newArr = [...arr];
+  for (let i = 0; i < newArr.length; i++) {
     let placeholder = newArr[i];
     let newIndex = Math.floor(Math.random() * newArr.length);
     newArr[i] = newArr[newIndex];
     newArr[newIndex] = placeholder;
   }
-  return newArr
-}
+  return newArr;
+};
 
 const shuffleItems = arr => {
-  const newArr = [...arr]
-  const possibleCopy = shuffleArr(possible_items)
-  for (let i=0; i < newArr.length; i++) {
+  const newArr = [...arr];
+  const possibleCopy = shuffleArr(possible_items);
+  for (let i = 0; i < newArr.length; i++) {
     newArr[i] = possibleCopy[i];
   }
-  return newArr
-}
+  return newArr;
+};
 
 const init_gr = (items, capacity) => {
   const gr = [];
@@ -178,7 +174,7 @@ function reducer(state, action) {
         grid: new_grid,
         item_i: 0,
         weight_i: 0,
-        items: items_init,
+        items: items_init
       };
     case "STEP":
       return {
@@ -352,8 +348,8 @@ function Knapsack() {
       }
     } else {
       if (i_i === state.items.length - 1) {
-        // Moving past end (auto reset)
-        reset(e);
+        // Moving past end (auto shuffle)
+        shuffle(e);
         return;
       }
       i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
@@ -377,7 +373,7 @@ function Knapsack() {
     setDidReset(true);
     setFoundSolution(false);
     dispatch({ type: "SHUFFLE", items: newItems });
-  }
+  };
 
   useEffect(() => {
     if (didReset) {
@@ -401,7 +397,7 @@ function Knapsack() {
         a pile of available items and a row of knapsacks on the floor from 1lb -
         (capacity)lbs. Then we pull items from our available pile one by one and
         check for the highest value, with only our checked items, at each size.
-        For each new item we check we know the previous row hold the highest
+        For each new item we check we know the previous row holds the highest
         possible value for each size knapsack. First, initialize a 2d array of
         size (number of items * capacity).
       </p>
