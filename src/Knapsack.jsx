@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useReducer } from "react";
 
 const container = {
-  background: "red",
+  background: "black",
   width: "900px",
   padding: "0 20px",
   height: "60vh",
   margin: "10px auto",
   borderRadius: "10px",
-  display: "flex",
-  justifyContent: "space-between"
+  display: "flex"
 };
 
 const column_style = {
@@ -20,24 +19,47 @@ const column_style = {
 };
 
 const items_style = {
-  ...column_style,
-  lineHeight: "12px"
+  lineHeight: "5px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  margin: "40px 0",
+  padding: "5px"
 };
 
-const item_style = {
-  marginBottom: "40px"
+const single_item = {
+  margin: "5px 0"
+};
+
+const items_grid_container = {
+  display: "flex"
 };
 
 const messages_style = {
-  ...column_style
+  ...column_style,
+  flexGrow: 1,
+  padding: "15px"
 };
 
 const grid_box_style = {
   ...column_style,
-  width: "45%",
+  flexGrow: 2,
   display: "flex",
   flexDirection: "column",
   alignItems: "center"
+};
+
+const grid_header_style = {
+  width: "100%",
+  margin: "15px 0 0 0",
+  padding: 0,
+  fontWeight: "bold"
+};
+
+const capacity_style = {
+  display: "flex",
+  justifyContent: "space-around",
+  fontWeight: "bold"
 };
 
 const grid_style = {
@@ -54,12 +76,11 @@ const grid_item_style = {
   height: "64px",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-evenly",
   alignItems: "center",
   justifyContent: "center",
   border: "1px solid black",
   padding: "3px",
-  margin: "0 10px"
+  margin: "10px"
 };
 
 const current_grid_item_style = {
@@ -68,9 +89,10 @@ const current_grid_item_style = {
   fontWeight: "bold"
 };
 
-const blurStyle = {
+const blurb_style = {
   width: "60%",
-  margin: "0 auto"
+  margin: "0 auto",
+  padding: "10px"
 };
 
 const button_style = {
@@ -308,7 +330,11 @@ function Knapsack() {
   return (
     <div className="Knapsack">
       <h3>Dynamic Programming Solution for The Knapsack</h3>
-      <p style={blurStyle}>
+      <p style={blurb_style}>
+        Given a set of items, each with a value and weight, and a knapsack with
+        a given capacity, find the maximum value that will fit in the knapsack.
+      </p>
+      <p style={blurb_style}>
         This solution divides the capacity of the knapsack into smaller
         knapsacks and adds one item at a time checking for the most valuable
         combination of items for each knapsack. First, initialize a 2d array of
@@ -321,16 +347,6 @@ function Knapsack() {
         Reset
       </button>
       <div style={container}>
-        <div style={items_style}>
-          {state.items.map(x => (
-            <div style={item_style} key={`items ${x.name}`}>
-              <h3>{x.name}</h3>
-              <p>Cost: {x.cost}</p>
-              <p>Value: {x.val}</p>
-            </div>
-          ))}
-        </div>
-
         <div style={messages_style}>
           {state.messages.map((x, i) =>
             i === 0 ? <h3 key={i}>{x}</h3> : <p key={i}>{x}</p>
@@ -339,35 +355,51 @@ function Knapsack() {
 
         {!!state.grid.length && (
           <div style={grid_box_style}>
-            <h2>{state.grid[0].map((x, cap) => cap + 1)}</h2>
-            <div style={grid_style}>
-              {state.grid.map((row, i) => (
-                <div style={rowStyle} key={state.items[i].name}>
-                  {row.map((x, j) => {
-                    return (
-                      <div
-                        key={`${row}${j}`}
-                        style={
-                          i === state.item_i && j === state.weight_i
-                            ? current_grid_item_style
-                            : grid_item_style
-                        }
-                      >
-                        <span>{x.val === null ? "?" : x.val}</span>
-                        {x.items
-                          ? !!x.items.length
-                            ? x.items.map(item => (
-                                <span key={`items${row}${x}${item}`}>
-                                  {item}
-                                </span>
-                              ))
-                            : "None"
-                          : "?"}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+            <p style={grid_header_style}>CAPACITY</p>
+            <div style={items_grid_container}>
+              <div style={items_style}>
+                {state.items.map(x => (
+                  <div style={single_item} key={`items ${x.name}`}>
+                    <h3>{x.name}</h3>
+                    <p>Weight: {x.cost}lb</p>
+                    <p>Value: {x.val}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={grid_style}>
+                <p style={capacity_style}>
+                  {state.grid[0].map((x, cap) => (
+                    <span>{cap + 1}lb</span>
+                  ))}
+                </p>
+                {state.grid.map((row, i) => (
+                  <div style={rowStyle} key={state.items[i].name}>
+                    {row.map((x, j) => {
+                      return (
+                        <div
+                          key={`${row}${j}`}
+                          style={
+                            i === state.item_i && j === state.weight_i
+                              ? current_grid_item_style
+                              : grid_item_style
+                          }
+                        >
+                          <span>{x.val === null ? "?" : x.val}</span>
+                          {x.items
+                            ? !!x.items.length
+                              ? x.items.map(item => (
+                                  <span key={`items${row}${x}${item}`}>
+                                    {item}
+                                  </span>
+                                ))
+                              : "None"
+                            : "?"}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
             {foundSolution && (
               <p>
