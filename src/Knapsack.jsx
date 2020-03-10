@@ -133,92 +133,130 @@ function reducer(state, action) {
 function Knapsack() {
   const [state, dispatch] = useReducer(reducer, init_state);
   const [didReset, setDidReset] = useState(true);
+  const [foundSolution, setFoundSolution] = useState(false);
 
   const getMessages = (i, w) => {
     const messages = [];
+    const cur_item = state.items[i];
+    const prev_knapsack = i === 0 ? null : state.grid[i - 1][w];
     const gr_copy = JSON.parse(JSON.stringify(state.grid));
-    if (state.items[i].cost > w + 1) {
-      messages.push("TOO BIG");
+    // Makes a deep copy of the 2D grid array
+    if (cur_item.cost > w + 1) {
+      // Too big for knapsack
+      messages.push(
+        `${cur_item.name} weighs ${cur_item.cost}lbs and doesn't fit into ${w +
+          1}lb knapsack.`
+      );
       if (i === 0) {
+        // Too big & first item
         messages.push(
-          "This is the first item so there are no other rows to check, val is 0"
+          `This is the first item we're checking and it doesn't fit into a ${w +
+            1}lb knapsack. The value for this knapsack is 0 and items is None.`
         );
         gr_copy[i][w] = { val: 0, items: [] };
       } else {
         // Too big, get value from last row
+        messages.push(
+          `${cur_item.name} doesn't fit - copy the ${w +
+            1}lb knapsack from the previous row.`
+        );
         gr_copy[i][w] = { ...gr_copy[i - 1][w] };
       }
     } else {
-      messages.push("IT FITS");
-      if (state.items[i].cost === w + 1) {
-        // item is size of bag
-        if (i === 0 || state.items[i].val > state.grid[i - 1][w].val) {
-          if (i === 0) {
-            messages.push(
-              `No other rows to check, value is ${state.items[i].val}`
-            );
-            gr_copy[i][w] = {
-              val: state.items[i].val,
-              items: [state.items[i].name]
-            };
-          } else {
-            messages.push("HIGHER val");
-            gr_copy[i][w] = {
-              val: state.items[i].val,
-              items: [state.items[i].name]
-            };
-          }
-        } else {
-          messages.push("LOWER val");
+      // The item fits knapsack
+      messages.push(
+        `${cur_item.name} weighs ${cur_item.cost}lb and fits into ${w +
+          1}lb knapsack.`
+      );
+      if (cur_item.cost === w + 1) {
+        // Item is exact capacity of snackpack
+        if (i === 0) {
+          // Exact fit & first item
+          messages.push(
+            `This is the first item we are checking and it fits perfectly into the knapsack!`
+          );
+          messages.push(
+            `This knapsack is worth ${cur_item.val} and holds only the ${cur_item.name}.`
+          );
           gr_copy[i][w] = {
-            val: state.grid[i - 1][w].val,
-            items: state.grid[i - 1][w].items
+            val: cur_item.val,
+            items: [cur_item.name]
+          };
+        } else if (cur_item.val > prev_knapsack.val) {
+          // Exact fit & not first item & higher value than previous knapsack
+          messages.push(
+            `${cur_item.name} fits perfectly - but is the value HIGHER or LOWER than the previous knapsack for this capacity?`
+          );
+          messages.push(`${cur_item.name} is more valuable!`);
+          gr_copy[i][w] = {
+            val: cur_item.val,
+            items: [cur_item.name]
+          };
+        } else {
+          messages.push(
+            `${cur_item.name} fits perfectly - but is the value HIGHER or LOWER than the previous knapsack for this capacity?`
+          );
+          messages.push(
+            `${cur_item.name} is less valuable (or same value based on this implementation).`
+          );
+          gr_copy[i][w] = {
+            val: prev_knapsack.val,
+            items: prev_knapsack.items
           };
         }
       } else {
-        // bag can fit more items
+        // Bag can fit more items
         if (i === 0) {
-          // first item
+          // Can fit more & first item
+          messages.push(`There's room for more items!`);
           messages.push(
-            "And there's room for more items, but no other items to check"
+            `But this is the first item we're checking so only the ${cur_item.name} will go in this knapsack.`
           );
           gr_copy[i][w] = {
-            val: state.items[i].val,
-            items: [state.items[i].name]
+            val: cur_item.val,
+            items: [cur_item.name]
           };
         } else {
-          // not first item
+          // Can fit more & not first item
           if (
-            state.items[i].val +
-              state.grid[i - 1][w - state.items[i].cost].val >
-            state.grid[i - 1][w].val
+            cur_item.val + state.grid[i - 1][w - cur_item.cost].val >
+            prev_knapsack.val
           ) {
             // Item + extra bag is greater than last
             messages.push(
-              `There's extra room in our knapsack. Current item + last bag of capacity ${w +
+              `There's ${w +
                 1 -
-                state.items[i].cost} is more valuable than the last rows ${w +
-                1}lbs knapsack`
+                cur_item.cost}lb of space left in our knapsack.`
+            );
+            messages.push(
+              `${cur_item.name} + previous ${w +
+                1 -
+                cur_item.cost}lb knapsack is more valuable than the last rows ${w +
+                1}lb knapsack.`
             );
             gr_copy[i][w] = {
-              val:
-                state.items[i].val +
-                state.grid[i - 1][w - state.items[i].cost].val,
+              val: cur_item.val + state.grid[i - 1][w - cur_item.cost].val,
               items: [
-                ...state.grid[i - 1][w - state.items[i].cost].items,
-                state.items[i].name
+                ...state.grid[i - 1][w - cur_item.cost].items,
+                cur_item.name
               ]
             };
           } else {
+            // Item + extra bag is less than last
             messages.push(
-              `There's extra room in our knapsack. Current item + last bag of capacity ${w +
+              `There's ${w +
                 1 -
-                state.items[i].cost} is less valuable than the last rows ${w +
-                1}lbs knapsack`
+                cur_item.cost}lb of space left in our knapsack.`
+            );
+            messages.push(
+              `${cur_item.name} + previous ${w +
+                1 -
+                cur_item.cost}lb knapsack is less valuable than the last rows ${w +
+                1}lb knapsack.`
             );
             gr_copy[i][w] = {
-              val: state.grid[i - 1][w].val,
-              items: state.grid[i - 1][w - state.items[i].cost].items
+              val: prev_knapsack.val,
+              items: [...prev_knapsack.items]
             };
           }
         }
@@ -233,6 +271,12 @@ function Knapsack() {
     let w_i = state.weight_i;
     if (state.weight_i + 1 < state.capacity) {
       w_i = state.weight_i + 1;
+      if (
+        state.weight_i + 1 === state.capacity - 1 &&
+        i_i === state.items.length - 1
+      ) {
+        setFoundSolution(true);
+      }
     } else {
       if (i_i === state.items.length - 1) {
         reset(e);
@@ -241,6 +285,7 @@ function Knapsack() {
       i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
       w_i = 0;
     }
+
     const updated = getMessages(i_i, w_i);
     dispatch({ type: "STEP", i: i_i, w: w_i, ...updated });
   };
@@ -248,6 +293,7 @@ function Knapsack() {
   const reset = e => {
     e.preventDefault();
     setDidReset(true);
+    setFoundSolution(false);
     dispatch({ type: "RESET" });
   };
 
@@ -323,6 +369,13 @@ function Knapsack() {
                 </div>
               ))}
             </div>
+            {foundSolution && (
+              <p>
+                Solution: The highest total value that will also fit in a{" "}
+                {state.capacity}lb knapsack is{" "}
+                {state.grid[state.items.length - 1][state.capacity - 1].val}.
+              </p>
+            )}
           </div>
         )}
       </div>
