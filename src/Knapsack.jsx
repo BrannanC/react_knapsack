@@ -22,9 +22,8 @@ const items_style = {
   lineHeight: "5px",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "center",
-  margin: "40px 0",
-  padding: "5px"
+  justifyContent: "space-between",
+  margin: "61px 0 20px"
 };
 
 const single_item = {
@@ -93,6 +92,16 @@ const blurb_style = {
   width: "60%",
   margin: "0 auto",
   padding: "10px"
+};
+
+const small_p = {
+  fontSize: "12px"
+};
+
+const big_p = {
+  fontSize: "16px",
+  fontWeight: "bold",
+  margin: "4px 0"
 };
 
 const button_style = {
@@ -360,9 +369,9 @@ function Knapsack() {
               <div style={items_style}>
                 {state.items.map(x => (
                   <div style={single_item} key={`items ${x.name}`}>
-                    <h3>{x.name}</h3>
-                    <p>Weight: {x.cost}lb</p>
-                    <p>Value: {x.val}</p>
+                    <p style={big_p}>{x.name}</p>
+                    <p style={small_p}>Weight: {x.cost}lb</p>
+                    <p style={small_p}>Value: {x.val}</p>
                   </div>
                 ))}
               </div>
