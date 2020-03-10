@@ -177,7 +177,8 @@ function reducer(state, action) {
         ...state,
         grid: new_grid,
         item_i: 0,
-        weight_i: 0
+        weight_i: 0,
+        items: items_init,
       };
     case "STEP":
       return {
