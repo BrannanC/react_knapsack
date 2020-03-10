@@ -346,7 +346,12 @@ function Knapsack() {
       <p style={blurb_style}>
         This solution divides the capacity of the knapsack into smaller
         knapsacks and adds one item at a time checking for the most valuable
-        combination of items for each knapsack. First, initialize a 2d array of
+        combination of items for each knapsack. I like to think of it as we have
+        a pile of available items and a row of knapsacks on the floor from 1lb -
+        (capacity)lbs. Then we pull items from our available pile one by one and
+        check for the highest value, with only our checked items, at each size.
+        For each new item we check we know the previous row hold the highest
+        possible value for each size knapsack. First, initialize a 2d array of
         size (number of items * capacity).
       </p>
       <button style={button_style} onClick={step}>
