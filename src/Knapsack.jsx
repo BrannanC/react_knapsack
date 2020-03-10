@@ -4,7 +4,7 @@ const container = {
   background: "black",
   width: "900px",
   padding: "0 20px",
-  height: "60vh",
+  minHeight: "60vh",
   margin: "10px auto",
   borderRadius: "10px",
   display: "flex"
@@ -19,7 +19,6 @@ const column_style = {
 };
 
 const items_style = {
-  lineHeight: "5px",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
@@ -72,7 +71,7 @@ const rowStyle = {
 
 const grid_item_style = {
   width: "70px",
-  height: "64px",
+  minHeight: "64px",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -95,7 +94,8 @@ const blurb_style = {
 };
 
 const small_p = {
-  fontSize: "12px"
+  fontSize: "12px",
+  margin: "0"
 };
 
 const big_p = {
@@ -112,11 +112,42 @@ const button_style = {
   borderRadius: "3px"
 };
 
-const items_init = [
-  { name: "Guitar", cost: 1, val: 1500 },
+const possible_items = [
+  { name: "Ukulele", cost: 1, val: 1500 },
   { name: "Stereo", cost: 4, val: 3000 },
-  { name: "Laptop", cost: 3, val: 2000 }
+  { name: "Laptop", cost: 3, val: 2000 }, 
+  { name: "Garbage", cost: 3, val: 500 },
+  { name: "Diamond", cost: 1, val: 4000 },
+  { name: "Sandwich", cost: 1, val: 750 },
+  { name: "Leaf Blower", cost: 4, val: 2000 },
+  { name: "Iggy the Iguana", cost: 2, val: 5000 },
+]
+
+const items_init = [
+  possible_items[0],
+  possible_items[1],
+  possible_items[2]
 ];
+
+const shuffleArr = arr => {
+  const newArr = [...arr]
+  for (let i=0; i < newArr.length; i++) {
+    let placeholder = newArr[i];
+    let newIndex = Math.floor(Math.random() * newArr.length);
+    newArr[i] = newArr[newIndex];
+    newArr[newIndex] = placeholder;
+  }
+  return newArr
+}
+
+const shuffleItems = arr => {
+  const newArr = [...arr]
+  const possibleCopy = shuffleArr(possible_items)
+  for (let i=0; i < newArr.length; i++) {
+    newArr[i] = possibleCopy[i];
+  }
+  return newArr
+}
 
 const init_gr = (items, capacity) => {
   const gr = [];
@@ -156,6 +187,15 @@ function reducer(state, action) {
         messages: action.messages,
         grid: action.grid
       };
+    case "SHUFFLE":
+      const shuffled_grid = init_gr(action.items, 4);
+      return {
+        ...state,
+        grid: shuffled_grid,
+        item_i: 0,
+        weight_i: 0,
+        items: action.items
+      };
     default:
       throw new Error();
   }
@@ -166,7 +206,7 @@ function Knapsack() {
   const [didReset, setDidReset] = useState(true);
   const [foundSolution, setFoundSolution] = useState(false);
 
-  const getMessages = (i, w) => {
+  const getGridData = (i, w) => {
     const messages = [];
     const cur_item = state.items[i];
     const prev_knapsack = i === 0 ? null : state.grid[i - 1][w];
@@ -303,6 +343,7 @@ function Knapsack() {
     if (state.weight_i + 1 < state.capacity) {
       w_i = state.weight_i + 1;
       if (
+        // Reached end
         state.weight_i + 1 === state.capacity - 1 &&
         i_i === state.items.length - 1
       ) {
@@ -310,14 +351,15 @@ function Knapsack() {
       }
     } else {
       if (i_i === state.items.length - 1) {
+        // Moving past end (auto reset)
         reset(e);
         return;
       }
       i_i = state.item_i >= state.items.length - 1 ? 0 : state.item_i + 1;
       w_i = 0;
     }
-
-    const updated = getMessages(i_i, w_i);
+    // setDidStep(true);
+    const updated = getGridData(i_i, w_i);
     dispatch({ type: "STEP", i: i_i, w: w_i, ...updated });
   };
 
@@ -328,9 +370,17 @@ function Knapsack() {
     dispatch({ type: "RESET" });
   };
 
+  const shuffle = e => {
+    e.preventDefault();
+    const newItems = shuffleItems(state.items);
+    setDidReset(true);
+    setFoundSolution(false);
+    dispatch({ type: "SHUFFLE", items: newItems });
+  }
+
   useEffect(() => {
     if (didReset) {
-      const updated = getMessages(0, 0);
+      const updated = getGridData(0, 0);
       setDidReset(false);
       dispatch({ type: "STEP", i: 0, w: 0, ...updated });
     }
@@ -360,6 +410,9 @@ function Knapsack() {
       <button style={button_style} onClick={reset}>
         Reset
       </button>
+      <button style={button_style} onClick={shuffle}>
+        Shuffle
+      </button>
       <div style={container}>
         <div style={messages_style}>
           {state.messages.map((x, i) =>
@@ -372,8 +425,8 @@ function Knapsack() {
             <p style={grid_header_style}>CAPACITY</p>
             <div style={items_grid_container}>
               <div style={items_style}>
-                {state.items.map(x => (
-                  <div style={single_item} key={`items ${x.name}`}>
+                {state.items.map((x, i) => (
+                  <div style={single_item} key={`items ${i}`}>
                     <p style={big_p}>{x.name}</p>
                     <p style={small_p}>Weight: {x.cost}lb</p>
                     <p style={small_p}>Value: {x.val}</p>
@@ -383,11 +436,11 @@ function Knapsack() {
               <div style={grid_style}>
                 <p style={capacity_style}>
                   {state.grid[0].map((x, cap) => (
-                    <span>{cap + 1}lb</span>
+                    <span key={cap}>{cap + 1}lb</span>
                   ))}
                 </p>
                 {state.grid.map((row, i) => (
-                  <div style={rowStyle} key={state.items[i].name}>
+                  <div style={rowStyle} key={`${state.items[i].name} ${i}`}>
                     {row.map((x, j) => {
                       return (
                         <div
@@ -402,7 +455,7 @@ function Knapsack() {
                           {x.items
                             ? !!x.items.length
                               ? x.items.map(item => (
-                                  <span key={`items${row}${x}${item}`}>
+                                  <span key={`items${row}${x.name}${item}`}>
                                     {item}
                                   </span>
                                 ))
