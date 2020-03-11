@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useReducer } from "react";
 
+import Credits from "./Credits";
+
 const knap_page = {
   margin: "40px auto 90px"
 };
@@ -537,6 +539,7 @@ function Knapsack() {
           </div>
         )}
       </div>
+      <Credits />
     </div>
   );
 }
