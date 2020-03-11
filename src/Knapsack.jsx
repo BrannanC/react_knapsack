@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useReducer } from "react";
 
+const knap_page = {
+  margin: "40px auto 90px"
+};
+
 const container = {
   background: "black",
   width: "900px",
@@ -8,6 +12,25 @@ const container = {
   margin: "10px auto",
   borderRadius: "10px",
   display: "flex"
+};
+
+const top_container = {
+  ...container,
+  flexDirection: "column",
+  minHeight: 0
+};
+
+const blurb_container = {
+  margin: "20px",
+  padding: "3px",
+  background: "#f5f2ed",
+  borderRadius: "10px"
+};
+
+const blurb_style = {
+  width: "70%",
+  margin: "0 auto",
+  padding: "10px"
 };
 
 const column_style = {
@@ -100,12 +123,6 @@ const current_grid_item_style = {
   color: "black",
   border: "2px solid black",
   fontWeight: "bold"
-};
-
-const blurb_style = {
-  width: "60%",
-  margin: "0 auto",
-  padding: "10px"
 };
 
 const small_p = {
@@ -411,32 +428,29 @@ function Knapsack() {
   }, [didReset]);
 
   return (
-    <div className="Knapsack">
-      <h3>Dynamic Programming Solution for The Knapsack</h3>
-      <p style={blurb_style}>
-        Given a set of items, each with a value and weight, and a knapsack with
-        a given capacity, find the maximum value that will fit in the knapsack.
-      </p>
-      <p style={blurb_style}>
-        This solution divides the capacity of the knapsack into smaller
-        knapsacks and adds one item at a time checking for the most valuable
-        combination of items for each knapsack. I like to think of it as we have
-        a pile of available items and a row of knapsacks on the floor from 1lb -
-        (capacity)lbs. Then we pull items from our available pile one by one and
-        check for the highest value, with only our checked items, at each size.
-        For each new item we check we know the previous row holds the highest
-        possible value for each size knapsack. First, initialize a 2d array of
-        size (number of items * capacity).
-      </p>
-      <button style={button_style} onClick={step}>
-        Step
-      </button>
-      <button style={button_style} onClick={reset}>
-        Reset
-      </button>
-      <button style={button_style} onClick={shuffle}>
-        Shuffle
-      </button>
+    <div className="Knapsack" style={knap_page}>
+      <div style={top_container}>
+        <div style={blurb_container}>
+          <h3>Dynamic Programming Solution for The Knapsack</h3>
+          <p style={blurb_style}>
+            Given a set of items, each with a value and weight, and a knapsack
+            with a given capacity, find the maximum value that will fit in the
+            knapsack.
+          </p>
+          <p style={blurb_style}>
+            This solution divides the capacity of the knapsack into smaller
+            knapsacks and adds one item at a time checking for the most valuable
+            combination of items for each knapsack. I like to think of it as we
+            have a pile of available items and a row of knapsacks on the floor
+            from 1lb - (capacity)lbs. Then we pull items from our available pile
+            one by one and check for the highest value, with only our checked
+            items, at each size. For each new item we check we know the previous
+            row holds the highest possible value for each size knapsack. First,
+            initialize a 2d array of size (number of items * capacity).
+          </p>
+        </div>
+      </div>
+
       <div style={container}>
         <div style={messages_style}>
           {state.messages.map((x, i) =>
@@ -501,6 +515,17 @@ function Knapsack() {
                   </div>
                 ))}
               </div>
+            </div>
+            <div>
+              <button style={button_style} onClick={step}>
+                Step
+              </button>
+              <button style={button_style} onClick={reset}>
+                Reset
+              </button>
+              <button style={button_style} onClick={shuffle}>
+                Shuffle
+              </button>
             </div>
             {foundSolution && (
               <p>
