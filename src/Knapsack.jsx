@@ -81,9 +81,19 @@ const grid_item_style = {
   margin: "10px"
 };
 
-const current_grid_item_style = {
+const highlighted_style = {
   ...grid_item_style,
   color: "red",
+  opacity: 0.7,
+  border: "2px solid black",
+  fontWeight: "bold"
+};
+
+const current_grid_item_style = {
+  ...grid_item_style,
+  background: "red",
+  color: "black",
+  border: "2px solid black",
   fontWeight: "bold"
 };
 
@@ -202,12 +212,18 @@ function Knapsack() {
   const [state, dispatch] = useReducer(reducer, init_state);
   const [didReset, setDidReset] = useState(true);
   const [foundSolution, setFoundSolution] = useState(false);
+  const [prevOptimal, setPrevOptimal] = useState(null);
+  const [lastSmallKnap, setLastSmallKnap] = useState(null);
 
   const getGridData = (i, w) => {
     const messages = [];
     const cur_item = state.items[i];
     const prev_knapsack = i === 0 ? null : state.grid[i - 1][w];
+    const prev_knapsack_indexes = i === 0 ? null : { i: i - 1, w: w };
+    let smallKnapSack = null;
+    setPrevOptimal(prev_knapsack_indexes);
     const gr_copy = JSON.parse(JSON.stringify(state.grid));
+
     // Makes a deep copy of the 2D grid array
     if (cur_item.cost > w + 1) {
       // Too big for knapsack
@@ -286,6 +302,7 @@ function Knapsack() {
           };
         } else {
           // Can fit more & not first item
+          smallKnapSack = { i: i - 1, w: w - cur_item.cost };
           if (
             cur_item.val + state.grid[i - 1][w - cur_item.cost].val >
             prev_knapsack.val
@@ -330,6 +347,7 @@ function Knapsack() {
         }
       }
     }
+    setLastSmallKnap(smallKnapSack);
     return { grid: gr_copy, messages };
   };
 
@@ -371,6 +389,8 @@ function Knapsack() {
     e.preventDefault();
     const newItems = shuffleItems(state.items);
     setDidReset(true);
+    setLastSmallKnap(null);
+    setPrevOptimal(null);
     setFoundSolution(false);
     dispatch({ type: "SHUFFLE", items: newItems });
   };
@@ -379,6 +399,8 @@ function Knapsack() {
     if (didReset) {
       const updated = getGridData(0, 0);
       setDidReset(false);
+      setLastSmallKnap(null);
+      setPrevOptimal(null);
       dispatch({ type: "STEP", i: 0, w: 0, ...updated });
     }
   }, [didReset]);
@@ -443,8 +465,15 @@ function Knapsack() {
                         <div
                           key={`${row}${j}`}
                           style={
-                            i === state.item_i && j === state.weight_i
+                            (lastSmallKnap &&
+                              lastSmallKnap.i === i &&
+                              lastSmallKnap.w === j) ||
+                            (i === state.item_i && j === state.weight_i)
                               ? current_grid_item_style
+                              : prevOptimal &&
+                                prevOptimal.i === i &&
+                                prevOptimal.w === j
+                              ? highlighted_style
                               : grid_item_style
                           }
                         >
