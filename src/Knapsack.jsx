@@ -29,6 +29,11 @@ const single_item = {
   margin: "5px 0"
 };
 
+const grey_item_style = {
+  ...single_item,
+  color: "#546773"
+};
+
 const items_grid_container = {
   display: "flex"
 };
@@ -445,7 +450,10 @@ function Knapsack() {
             <div style={items_grid_container}>
               <div style={items_style}>
                 {state.items.map((x, i) => (
-                  <div style={single_item} key={`items ${i}`}>
+                  <div
+                    style={i > state.item_i ? grey_item_style : single_item}
+                    key={`items ${i}`}
+                  >
                     <p style={big_p}>{x.name}</p>
                     <p style={small_p}>Weight: {x.cost}lb</p>
                     <p style={small_p}>Value: {x.val}</p>
