@@ -1,72 +1,24 @@
-https://determined-sinoussi-7e2f14.netlify.com/
+# The Knapsack Problem :ghostboi:
 
-This is a tool for learning Dynamic Programming. It steps through _the knapsack_ :ghostboi: problem. Please add changes and make this a useable tool. The unfinished branch will stay the way it is so it can be used as an exercise.
+You can find the deployed project [here](https://determined-sinoussi-7e2f14.netlify.com/).
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1f792c2c-b5f3-4ed3-b96b-a8b1a4d84462/deploy-status)](https://app.netlify.com/sites/determined-sinoussi-7e2f14/deploys)
 
-## Available Scripts
+## Contributors
 
-In the project directory, you can run:
+| [<img src="https://avatars1.githubusercontent.com/u/39506884?s=460&v=4" width = "200" />](https://github.com/BrannanC) | [<img src="https://ca.slack-edge.com/T4JUEB3ME-UGHE0V5AN-bfbd3d938465-512" width = "200" />](https://github.com/DuckEverlasting) | [<img src="https://avatars2.githubusercontent.com/u/47289060?s=460&v=4" width = "200" />](https://github.com/amlane) |
+| :--------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
+|                                           [Brannan Conrad](https://bcon.dev)                                           |                                               [Matt Klein](https://mattklein.dev)                                                |                                         [Amanda Lane](https://amandalane.me)                                         |
 
-### `yarn start`
+### Pull Requests
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+If you have developed a patch, bug fix, or new feature that would improve this app, please submit a pull request. It is best to communicate your ideas with the developers first before investing a great deal of time into a pull request to ensure that it will mesh smoothly with the project.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Remember that this project is licensed under the MIT license, and by submitting a pull request, you agree that your work will be, too.
 
-### `yarn test`
+#### Pull Request Guidelines
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- Update the README.md contributions section with your information.
+- Ensure that your code conforms to our existing code conventions and test coverage. LOL NOT.
+- Include the relevant issue number, if applicable.
+- You can add an existing contributer as a reviewer to merge your pull request. You can also request to be a collaborator.

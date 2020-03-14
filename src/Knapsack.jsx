@@ -10,23 +10,21 @@ const container = {
   background: "black",
   width: "900px",
   padding: "0 20px",
-  minHeight: "60vh",
-  margin: "10px auto",
-  borderRadius: "10px",
+  margin: "0 auto 10px",
   display: "flex"
 };
 
 const top_container = {
   ...container,
   flexDirection: "column",
-  minHeight: 0
+  marginBottom: 0
 };
 
 const blurb_container = {
-  margin: "20px",
+  margin: "20px auto 0",
   padding: "3px",
   background: "#f5f2ed",
-  borderRadius: "10px"
+  lineHeight: "1.2"
 };
 
 const blurb_style = {
@@ -37,10 +35,9 @@ const blurb_style = {
 
 const column_style = {
   width: "20%",
-  margin: "20px 10px",
+  margin: "20px 0",
   padding: "3px",
-  background: "#f5f2ed",
-  borderRadius: "10px"
+  background: "#f5f2ed"
 };
 
 const items_style = {
@@ -56,7 +53,7 @@ const single_item = {
 
 const grey_item_style = {
   ...single_item,
-  color: "#546773"
+  color: "grey"
 };
 
 const items_grid_container = {
@@ -66,7 +63,9 @@ const items_grid_container = {
 const messages_style = {
   ...column_style,
   flexGrow: 1,
-  padding: "15px"
+  borderRight: "15px solid black",
+  padding: "15px",
+  lineHeight: "1.2"
 };
 
 const grid_box_style = {
@@ -108,12 +107,15 @@ const grid_item_style = {
   justifyContent: "center",
   border: "1px solid black",
   padding: "3px",
-  margin: "10px"
+  margin: "10px",
+  background: "#f5f5f5",
+  boxShadow: "1px 1px 1px"
 };
 
 const highlighted_style = {
   ...grid_item_style,
-  color: "red",
+  color: "#f5f2ed",
+  background: "#ff0080", // hotpink
   opacity: 0.7,
   border: "2px solid black",
   fontWeight: "bold"
@@ -121,8 +123,8 @@ const highlighted_style = {
 
 const current_grid_item_style = {
   ...grid_item_style,
-  background: "red",
-  color: "black",
+  background: "#2962ff",
+  color: "#f5f2ed",
   border: "2px solid black",
   fontWeight: "bold"
 };
@@ -141,9 +143,27 @@ const big_p = {
 const button_style = {
   fontSize: "16px",
   fontWeight: "bold",
-  padding: "10px",
+  cursor: "pointer",
+  border: "1px solid black",
+  padding: "10px 0",
   margin: "15px",
+  width: "80px",
+  textAlign: "center",
+  background: "#242424",
+  color: "#f5f2ed",
   borderRadius: "3px"
+};
+
+const solution_style = {
+  fontWeight: "bold",
+  fontSize: "20px",
+  marginTop: "30px",
+  border: "1px solid black",
+  padding: "15px"
+};
+
+const green_text = {
+  color: "#2db84b"
 };
 
 const possible_items = [
@@ -431,6 +451,7 @@ function Knapsack() {
 
   return (
     <div className="Knapsack" style={knap_page}>
+      <h1>THE KNAPSACK</h1>
       <div style={top_container}>
         <div style={blurb_container}>
           <h3>Dynamic Programming Solution for The Knapsack</h3>
@@ -457,6 +478,13 @@ function Knapsack() {
         <div style={messages_style}>
           {state.messages.map((x, i) =>
             i === 0 ? <h3 key={i}>{x}</h3> : <p key={i}>{x}</p>
+          )}
+          {foundSolution && (
+            <p style={solution_style}>
+              <span style={green_text}>Solution:</span> The highest total value
+              that will also fit in a {state.capacity}lb knapsack is{" "}
+              {state.grid[state.items.length - 1][state.capacity - 1].val}.
+            </p>
           )}
         </div>
 
@@ -529,13 +557,6 @@ function Knapsack() {
                 Shuffle
               </button>
             </div>
-            {foundSolution && (
-              <p>
-                Solution: The highest total value that will also fit in a{" "}
-                {state.capacity}lb knapsack is{" "}
-                {state.grid[state.items.length - 1][state.capacity - 1].val}.
-              </p>
-            )}
           </div>
         )}
       </div>

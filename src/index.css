@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #242424;
+  font-family: "Open Sans", sans-serif;
 }
 
 code {
@@ -12,8 +14,19 @@ code {
     monospace;
 }
 
-button {
-  cursor: pointer;
-  border: 1px solid black;
-  border-radius: 10px;
+h1 {
+  color: #f5f2ed;
+}
+h1,
+h2,
+h3 {
+  font-family: "Josefin Sans", sans-serif;
+}
+
+a {
+  color: #f5f2ed;
+}
+
+.off-white {
+  color: #f5f2ed;
 }
